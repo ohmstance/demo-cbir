@@ -1,0 +1,11 @@
+torch
+torchvision
+tqdm
+Pillow
+numpy
+matplotlib
+opencv-python
+opencv-python-contrib
+# jupyterlab
+# ipywidgets
+# ipykernel
