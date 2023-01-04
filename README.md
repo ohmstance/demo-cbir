@@ -7,3 +7,4 @@ Use any Python notebook -- remember to `python -m pip install -r requirements.tx
 - Update feature vector database with `update_features.ipynb`
 - Perform CBIR using `get_similar.ipynb`
 - Check out `preprocessing_demo.ipynb` for comparing input and output of preprocessing.
+- Run GUI by running `gui_server.py`
