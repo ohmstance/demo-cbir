@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Image search form -->
+<div class="border rounded rounded-3 p-4">
+    <p class="h2">Similar image search</p>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="search_img" class="form-label">Image upload</label>
+            <input class="form-control" type="file" id="search_img" name="search_img" autocomplete="off" required="true">
+        </div>
+        <div class="mb-3">
+            <label for="select_class" class="form-label">Choose image class</label>
+            <select class="form-select" id="select_class" name="select_class" autocomplete="off" disabled="true">
+                {% for label in classes %}
+                <option value="{{ label }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" id="calculate_pr" name="calculate_pr">
+            <label class="form-check-label" for="calculate_pr">Calculate precision and recall</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+<!-- Show uploaded image -->
+{% if search_img %}
+<div class="p-3">
+    <p class="h3 mb-3">Input image</p>
+    <div class="text-center d-inline-block">
+        <img class="border rounded rounded-3 bg-black" src="{{ search_img }}" width="150px" height="150px" style="object-fit: scale-down;">
+        <figcaption>{{ search_img_name }}</figcaption>
+    </div>
+</div>
+{% endif %}
+
+<!-- Show similar images -->
+{% if retrieved %}
+<div class="p-3">
+    <p class="h3 mb-3">Retrieved images</p>
+    <div class="d-flex flex-wrap gap-3">
+        {% for filename, image, distance in retrieved %}
+        <div class="text-center">
+            <img class="border rounded rounded-3 bg-black" src="{{ image }}" width="150px" height="150px" style="object-fit: scale-down;">
+            <figcaption>{{ filename }}</figcaption>
+            <figcaption>{{ distance }}</figcaption>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Show calculated precision and recall -->
+{% if precision and recall %}
+<div class="p-3">
+    <p class="h3 mb-3">Calculated precision and recall</p>
+    <table class="table table-hover">
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Precision</td>
+                <td>{{ precision }}</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Recall</td>
+                <td>{{ recall }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block script %}
+<script>
+    // Disables image class selection if precision recall calculation checkbox is unchecked
+    let checkbox = document.getElementById('calculate_pr');
+    checkbox.addEventListener('change', function(event) {
+        $('#select_class').prop('disabled', !event.currentTarget.checked);
+    });
+    
+    // If update features button is clicked, display loading spinner and disable hyperlink button
+    let train_button = document.getElementById('train_button');
+    train_button.addEventListener('click', function(event) {
+        event.preventDefault()
+        $('#train_spinner').removeAttr('hidden');
+        let href = $('#train_button').attr('href');
+        $('#train_button').attr('href', 'javascript:void(0)');
+        window.location.replace(href);
+    });
+</script>
+{% endblock %}

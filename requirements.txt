@@ -9,3 +9,5 @@ opencv-python-contrib
 # jupyterlab
 # ipywidgets
 # ipykernel
+Flask
+waitress
