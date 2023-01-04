@@ -19,7 +19,7 @@ exiting = False
 def main_app():
     # Home page
     if request.method == 'GET':
-        return render_template("index.html")
+        return render_template("index.html", classes=cbir.list_classes())
     
     # POST request API for image search
     if request.method == 'POST':

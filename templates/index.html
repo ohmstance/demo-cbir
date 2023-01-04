@@ -10,15 +10,15 @@
             <input class="form-control" type="file" id="search_img" name="search_img" autocomplete="off" required="true">
         </div>
         <div class="mb-3">
-            <label for="select_class" class="form-label">Choose image class</label>
-            <select class="form-select" id="select_class" name="select_class" autocomplete="off" disabled="true">
+            <label for="select_class" class="form-label" id="select_class_label" hidden>Choose image class</label>
+            <select class="form-select" id="select_class" name="select_class" autocomplete="off" disabled="true" hidden>
                 {% for label in classes %}
                 <option value="{{ label }}">{{ label }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="mb-3 form-check">
-            <input class="form-check-input" type="checkbox" id="calculate_pr" name="calculate_pr">
+            <input class="form-check-input" type="checkbox" id="calculate_pr" name="calculate_pr" autocomplete="off">
             <label class="form-check-label" for="calculate_pr">Calculate precision and recall</label>
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
@@ -80,6 +80,9 @@
     let checkbox = document.getElementById('calculate_pr');
     checkbox.addEventListener('change', function(event) {
         $('#select_class').prop('disabled', !event.currentTarget.checked);
+        $('#select_class_label').prop('disabled', !event.currentTarget.checked);
+        $('#select_class').attr('hidden', !event.currentTarget.checked);
+        $('#select_class_label').attr('hidden', !event.currentTarget.checked);
     });
     
     // If update features button is clicked, display loading spinner and disable hyperlink button
