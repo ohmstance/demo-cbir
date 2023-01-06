@@ -61,9 +61,12 @@ def main_app():
         if request.form.get('calculate_pr', False):
             in_class = request.form['select_class']
             precision, recall = cbir.evaluate_search(in_class, sim)
+            plot = cbir.plot_pr_graph(in_class, sim)
+            plot = "data:image/png;base64," + b64encode(plot.getvalue()).decode('ascii')
             html_vars.update({
                 'precision': precision,
-                'recall': recall
+                'recall': recall,
+                'plot': plot
             })
         
         # Renders html page

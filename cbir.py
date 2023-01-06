@@ -1,8 +1,11 @@
 import cv2
 import torch
+import io
 import os
 import numpy as np
 import pickle
+import matplotlib
+import matplotlib.pyplot as plt
 from torchvision import transforms
 from torchvision.transforms.functional import gaussian_blur
 from torchvision.models import mobilenet_v3_small
@@ -10,6 +13,9 @@ from PIL import Image
 
 from tqdm.auto import tqdm
 from utils import image_show
+
+# Silence user warning by using a non-interactive backend
+matplotlib.use('agg')
 
 def update_features(db_path="features.pickle", img_dir="images"):
     """Update features in database according to images in image directory
@@ -250,3 +256,39 @@ def evaluate_search(in_class, retrieved, db_path="features.pickle"):
     recall = tp / (tp + fn)
     
     return precision, recall
+
+def plot_pr_graph(in_class, retrieved, db_path="features.pickle"):
+    # Refer to this stackoverflow answer regarding plotting Precision-Recall curve for CBIR
+    # https://stackoverflow.com/questions/25799107/how-do-i-plot-precision-recall-graphs-for-content-based-image-retrieval-in-matla
+
+    # Obtains what class the image is
+    img_class = in_class
+
+    # Makes a list of sorted distances for all 400 images in database
+    distance_list = [dist['distance'] for dist in retrieved]
+
+    # A list of indexes of where the image class is located in distance_list
+    relevant_indexes = [i+1 for i, dist in enumerate(retrieved) if img_class in dist['filename']]
+
+    # [1, 2, 3, 4, 5, ..., N] where N is the total num of relevant image class in database
+    thresholds = list(range(1, len(relevant_indexes)+1))
+
+    # Gets precision value if for every x number of images of relevant class are retrieved
+    # Precision = <relevant images retrieved> / (<relevant images retrieved> + <irrelevant images retrieved>)
+    precision = np.array(thresholds) / np.array(relevant_indexes)
+
+    # Creates multiple recall thresholds for x-axis where for x num of images retrieved, with y recall, what is the precision
+    # Recaall = <relevant images retrieved> / <relevant images in database>
+    recall = np.array(thresholds) / len(thresholds)
+
+    plt.plot(recall, precision, 'b.-')
+    plt.ylabel('Precision')
+    plt.xlabel('Recall')
+    plt.title(f'Precision-Recall Graph')
+    plt.axis([0, 1.05, 0, 1.05]) # Set x-axis and y-axis range
+    
+    mem_file = io.BytesIO()
+    plt.savefig(mem_file)
+    plt.close()
+    
+    return mem_file
