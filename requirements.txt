@@ -5,7 +5,7 @@ Pillow
 numpy
 matplotlib
 opencv-python
-opencv-python-contrib
+opencv-contrib-python
 # jupyterlab
 # ipywidgets
 # ipykernel
